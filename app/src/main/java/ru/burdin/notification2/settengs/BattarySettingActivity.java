@@ -38,7 +38,8 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        battaryModel = BattaryModel.getBattaryModel("battary");
+        preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
+        battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
         setContentView(R.layout.activity_battary_setting);
         tts = new TTS(this);
         seekBarSpeed = findViewById(R.id.seekBarSpeed);
@@ -47,8 +48,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, battaryModel.getLevels());
         listViewLevel.setAdapter(adapter);
-        preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
-        float prog = battaryModel.getSpeedVoice() * 100;
+                float prog = battaryModel.getSpeedVoice() * 100;
         seekBarSpeed.setProgress((int) prog);
         seekBarSpeed.setOnSeekBarChangeListener(
                 new SeekBar.OnSeekBarChangeListener() {
@@ -81,7 +81,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
                                     long id) {
                 battaryModel.getLevels().remove(((TextView) itemClicked).getText());
                 adapter.notifyDataSetChanged();
-                Toast.makeText(getApplicationContext(), "Уровень удален",
+                Toast.makeText(getApplicationContext(), getResources().getString(R.string.level_delete),
                         Toast.LENGTH_SHORT).show();
             }
         });
@@ -101,7 +101,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int level = intent.getIntExtra("level", 0);
-                String text = "Заряд аккамулятора  " + level + " %";
+                String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                 String utteranceId = this.hashCode() + "";
                 tts.speak(text, battaryModel.getSpeedVoice());
                 unregisterReceiver(broadcastReceiver);

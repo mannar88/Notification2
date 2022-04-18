@@ -9,10 +9,14 @@ import android.os.IBinder;
 import android.speech.tts.TextToSpeech;
 import android.widget.Toast;
 
+import ru.burdin.notification2.R;
 import ru.burdin.notification2.TTS;
 import ru.burdin.notification2.settengs.BattaryModel;
+import ru.burdin.notification2.settengs.PreferencesNotifications;
 
 public class BattaryService extends Service implements TextToSpeech.OnInitListener {
+
+    private PreferencesNotifications preferencesNotifications;
     private TTS textToSpeech;
     private BroadcastReceiver broadcastReceiver;
     private  int check;
@@ -31,13 +35,15 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
     public void onCreate() {
         super.onCreate();
         textToSpeech = new TTS(this);
-        battaryModel = BattaryModel.getBattaryModel("battary");
+
+        preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
+        battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
         broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int level = intent.getIntExtra("level", 0);
                 if (battaryModel.getLevels().contains(Integer.toString(level)) && level != check) {
-                    String text = "Заряд аккамулятора  " + level + " %";
+                    String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                     String utteranceId = this.hashCode() + "";
                     textToSpeech.speak(text, battaryModel.getSpeedVoice());
                     check = level;
@@ -61,7 +67,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
 
     @Override
     public void onDestroy() {
-        textToSpeech.speak("Служба выключена", battaryModel.getSpeedVoice());
+        textToSpeech.speak(getResources().getString(R.string.server_finish), battaryModel.getSpeedVoice());
         unregisterReceiver(broadcastReceiver);
                 super.onDestroy();
     }

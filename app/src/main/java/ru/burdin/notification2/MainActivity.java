@@ -26,7 +26,7 @@ private PreferencesNotifications preferencesNotifications;
     mChechBoxBattary = findViewById(R.id.checkBoxBattary);
     buttonBattery = findViewById(R.id.buttonSettingBattary);
     preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
-    battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString("battary"));
+    battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
 mChechBoxBattary.setChecked(battaryModel.isCheckBox());
 if (savedInstanceState == null)
 startStopServer();
@@ -50,7 +50,7 @@ Intent intent = new Intent(this, BattarySettingActivity.class);
 private  void  startStopServer() {
     if (mChechBoxBattary.isChecked()) {
         Intent intent =                             new Intent(MainActivity.this, BattaryService.class);
-        intent.putExtra("передача", "Служба отслеживания уровня зарята батареи активирована");
+        intent.putExtra("передача", getResources().getString(R.string.server_setup));
         startService(intent );
         battaryModel.setCheckBox(true);
     }else {
