@@ -19,7 +19,8 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
     private PreferencesNotifications preferencesNotifications;
     private TTS textToSpeech;
     private BroadcastReceiver broadcastReceiver;
-    private  int check;
+    private  boolean check = true;
+    private  int checkInt;
     private BattaryModel battaryModel;
 
     public BattaryService() {
@@ -42,11 +43,15 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
             @Override
             public void onReceive(Context context, Intent intent) {
                 int level = intent.getIntExtra("level", 0);
-                if (battaryModel.getLevels().contains(Integer.toString(level)) && level != check) {
+                if (checkInt != level){
+                    check = true;
+                }
+                if (battaryModel.getLevels().contains(Integer.toString(level)) && check) {
                     String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                     String utteranceId = this.hashCode() + "";
                     textToSpeech.speak(text, battaryModel.getSpeedVoice());
-                    check = level;
+                    check = false;
+                checkInt = level;
                 }
             }
         };

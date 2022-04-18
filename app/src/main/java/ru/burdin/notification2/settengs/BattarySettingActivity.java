@@ -87,6 +87,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
         });
     }
 
+
     public void onbuttoBattaryTestSpeakClick(View view) {
         speakTest();
         registerReceiver(

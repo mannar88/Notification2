@@ -9,7 +9,7 @@
     <TextView
         android:id="@+id/speed"
         android:layout_width="wrap_content"
-android:text="Скорость"
+android:text="@string/speed_voice_battary"
         android:layout_height="wrap_content"
         />
 
@@ -29,14 +29,14 @@ android:text="Скорость"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onbuttoBattaryTestSpeakClick"
-        android:text="Прослушать пример"
+        android:text="@string/voice_test_battary"
         app:layout_constraintTop_toBottomOf="@+id/seekBarSpeed"
         />
 
     <TextView
         android:id="@+id/textInfoLevel"
         android:layout_width="wrap_content"
-        android:text="Введите значения заряда, о которых необходимо уведомлять"
+        android:text="@string/text_edit_level"
         android:layout_height="wrap_content"
         app:layout_constraintTop_toBottomOf="@+id/buttonbattaryTestSpeak"
         />
@@ -54,7 +54,7 @@ android:text="Скорость"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onbuttoBattarySaveLevelClick"
-        android:text="Сохранить"
+        android:text="@string/button_save"
         app:layout_constraintTop_toBottomOf="@+id/editTextLevel"
         />
 
@@ -69,9 +69,8 @@ android:text="Скорость"
     <ListView
         android:id="@+id/listViewBattarySetting"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:contentDescription=""
+                android:layout_height="0dp"
+        android:layout_weight="1"
         app:layout_constraintTop_toBottomOf="@+id/textSaveLevel"
-        />
-
+/>
 </androidx.constraintlayout.widget.ConstraintLayout>

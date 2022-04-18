@@ -6,4 +6,10 @@
 <string name="level_delete">Уровень удален</string>
 <string name="level_notification">Заряд аккамулятора</string>
 <string name="server_finish">Служба отслеживания заряда выключена</string>
+<string name="check_on_of">Отслеживать уровень заряда</string>
+<string name="botton_setting_battary">Настройки батареи</string>
+<string name="speed_voice_battary">Скорость речи</string>
+    <string name="voice_test_battary">Прослушать пример</string>
+    <string name="text_edit_level">Введите значения заряда, о которых необходимо уведомлять</string>
+<string name="button_save">Сохранить</string>
 </resources>

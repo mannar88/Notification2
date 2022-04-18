@@ -10,7 +10,7 @@
     android:id="@+id/checkBoxBattary"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Отслеживать уровень заряда"
+    android:text="@string/check_on_of"
     android:onClick="onCheckboxClicked"
     />
 
@@ -19,7 +19,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:onClick="onbuttoSettingBattaryClick"
-        android:text="Настройки"
+        android:text="@string/botton_setting_battary"
         app:layout_constraintTop_toBottomOf="@+id/checkBoxBattary"/>
     />
 
