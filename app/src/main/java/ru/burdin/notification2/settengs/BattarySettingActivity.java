@@ -6,12 +6,14 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.BatteryManager;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SeekBar;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,11 +22,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 
 import ru.burdin.notification2.R;
 import ru.burdin.notification2.TTS;
 
-public class BattarySettingActivity<levels> extends AppCompatActivity {
+public class BattarySettingActivity extends AppCompatActivity   {
 
     private TTS tts;
     private SeekBar seekBarSpeed;
@@ -34,17 +37,31 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
     private ListView listViewLevel;
     private EditText editTextLevel;
     private ArrayAdapter<String> adapter;
-
-    @Override
+private Spinner spinner;
+    private  ArrayAdapter arrayAdapterSpiner;
+    private List<TextToSpeech.EngineInfo> listInstalledEngines;
+    private  List <String> listInstalledEnginesName;
+@Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
         battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
         setContentView(R.layout.activity_battary_setting);
-        tts = new TTS(this);
+        tts = TTS.getTTS(this);
         seekBarSpeed = findViewById(R.id.seekBarSpeed);
         listViewLevel = findViewById(R.id.listViewBattarySetting);
         editTextLevel = findViewById(R.id.editTextLevel);
+        spinner = findViewById(R.id.spinner);
+        listInstalledEngines = tts.getEngines();
+        listInstalledEnginesName = new ArrayList<>();
+        for (int i = 0; i < listInstalledEngines.size(); i++) {
+            listInstalledEnginesName.add(listInstalledEngines.get(i).label);
+        }
+        arrayAdapterSpiner = new ArrayAdapter<String>(this,
+                android.R.layout.simple_spinner_item,listInstalledEnginesName
+                );
+        arrayAdapterSpiner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line);
+        spinner.setAdapter(arrayAdapterSpiner);
         adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, battaryModel.getLevels());
         listViewLevel.setAdapter(adapter);
@@ -69,12 +86,19 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
                     }
                 }
         );
-    }
+
+}
 
     @Override
     protected void onResume() {
         super.onResume();
-
+battaryModel.setEngineInfo(listInstalledEngines.get(spinner.getSelectedItemPosition()));
+        //        spinner.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+//            @Override
+//            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+//
+//            }
+//        });
         listViewLevel.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View itemClicked, int position,
@@ -89,6 +113,8 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
 
 
     public void onbuttoBattaryTestSpeakClick(View view) {
+
+    battaryModel.setEngineInfo(listInstalledEngines.get(spinner.getSelectedItemPosition()));
         speakTest();
         registerReceiver(
                 broadcastReceiver,
@@ -104,7 +130,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
                 int level = intent.getIntExtra("level", 0);
                 String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                 String utteranceId = this.hashCode() + "";
-                tts.speak(text, battaryModel.getSpeedVoice());
+                tts.speak(text, battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
                 unregisterReceiver(broadcastReceiver);
             }
         };
@@ -125,7 +151,7 @@ public class BattarySettingActivity<levels> extends AppCompatActivity {
                 adapter.notifyDataSetChanged();
                 editTextLevel.setText("");
             } else {
-                tts.speak("Такой уровень уже имеется", battaryModel.getSpeedVoice());
+                tts.speak("Такой уровень уже имеется", battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
             }
         } else {
 

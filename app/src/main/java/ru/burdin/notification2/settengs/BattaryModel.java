@@ -1,6 +1,7 @@
 package ru.burdin.notification2.settengs;
 
 import android.graphics.ColorSpace;
+import android.speech.tts.TextToSpeech;
 
 import com.google.gson.Gson;
 
@@ -13,6 +14,15 @@ public final  class BattaryModel {
 private  float speedVoice = 1.0f;
 private ArrayList <String> levels = new ArrayList<>();
 
+    public TextToSpeech.EngineInfo getEngineInfo() {
+        return engineInfo;
+    }
+
+    public void setEngineInfo(TextToSpeech.EngineInfo engineInfo) {
+        this.engineInfo = engineInfo;
+    }
+
+    private  TextToSpeech.EngineInfo engineInfo;
     public ArrayList<String> getLevels() {
         return levels;
     }

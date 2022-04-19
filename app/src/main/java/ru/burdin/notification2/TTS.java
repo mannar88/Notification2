@@ -5,13 +5,22 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.util.List;
 import java.util.Locale;
 
-public class TTS implements TextToSpeech.OnInitListener {
-    private  TextToSpeech textToSpeech;
+public final  class TTS implements TextToSpeech.OnInitListener {
+    private  static  TTS tts;
+    private    TextToSpeech textToSpeech;
 private  boolean check;
-    public TTS(Context context) {
-        textToSpeech = new TextToSpeech(context, this::onInit);
+    private TTS(Context context) {
+        textToSpeech = new TextToSpeech(context, this);
+    }
+
+    public static  TTS getTTS(Context context) {
+        if (tts == null) {
+        tts = new TTS(context);
+        }
+return  tts;
     }
 
     @Override
@@ -25,7 +34,7 @@ private  boolean check;
 
             } else {
 check = true;
-//                sayWords();
+
             }
 
         } else {
@@ -33,10 +42,14 @@ check = true;
         }
     }
 
-    public  void speak ( String text, float speed) {
+    public  void speak ( String text, String textToSpeechEngineInfo, float speed) {
+        if (textToSpeechEngineInfo == null) {
+            textToSpeechEngineInfo = textToSpeech.getDefaultEngine();
+        }
         if (check) {
             textToSpeech.setSpeechRate(speed);
             String utteranceId = this.hashCode() + "";
+            textToSpeech.setEngineByPackageName(textToSpeechEngineInfo);
             textToSpeech.speak(text, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -44,4 +57,7 @@ check = true;
     public void destroy(){
         textToSpeech.shutdown();
     }
+public List<TextToSpeech.EngineInfo> getEngines () {
+        return  textToSpeech.getEngines();
+}
 }

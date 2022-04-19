@@ -35,7 +35,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
     @Override
     public void onCreate() {
         super.onCreate();
-        textToSpeech = new TTS(this);
+        textToSpeech = TTS.getTTS(this);
 
         preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
         battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
@@ -49,7 +49,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
                 if (battaryModel.getLevels().contains(Integer.toString(level)) && check) {
                     String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                     String utteranceId = this.hashCode() + "";
-                    textToSpeech.speak(text, battaryModel.getSpeedVoice());
+                    textToSpeech.speak(text, battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
                     check = false;
                 checkInt = level;
                 }
@@ -72,7 +72,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
 
     @Override
     public void onDestroy() {
-        textToSpeech.speak(getResources().getString(R.string.server_finish), battaryModel.getSpeedVoice());
+        textToSpeech.speak(getResources().getString(R.string.server_finish), battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
         unregisterReceiver(broadcastReceiver);
                 super.onDestroy();
     }

@@ -6,13 +6,18 @@
     android:layout_height="match_parent"
     tools:context=".settengs.BattarySettingActivity">
 
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        />
     <TextView
         android:id="@+id/speed"
         android:layout_width="wrap_content"
 android:text="@string/speed_voice_battary"
         android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/spinner"
         />
-
 
     <SeekBar
         android:id="@+id/seekBarSpeed"
