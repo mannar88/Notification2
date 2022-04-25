@@ -16,13 +16,12 @@ import ru.burdin.notification2.settengs.PreferencesNotifications;
 
 public class BattaryService extends Service implements TextToSpeech.OnInitListener {
 
-    private PreferencesNotifications preferencesNotifications;
-    private TTS textToSpeech;
+
+private  int checkInt;
     private BroadcastReceiver broadcastReceiver;
     private  boolean check = true;
-    private  int checkInt;
-    private BattaryModel battaryModel;
-
+    private  PreferencesNotifications preferencesNotifications;
+    private  BattaryModel battaryModel;
     public BattaryService() {
     }
 
@@ -35,11 +34,10 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
     @Override
     public void onCreate() {
         super.onCreate();
-        textToSpeech = TTS.getTTS(this);
-
-        preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
-        battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
-        broadcastReceiver = new BroadcastReceiver() {
+         PreferencesNotifications preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
+         battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
+         battaryModel.load(getApplicationContext());
+                broadcastReceiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 int level = intent.getIntExtra("level", 0);
@@ -49,7 +47,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
                 if (battaryModel.getLevels().contains(Integer.toString(level)) && check) {
                     String text = getResources().getString(R.string.level_notification) + " " + level + " %";
                     String utteranceId = this.hashCode() + "";
-                    textToSpeech.speak(text, battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
+battaryModel.getTts().speak(text, battaryModel.getSpeedVoice());
                     check = false;
                 checkInt = level;
                 }
@@ -57,6 +55,7 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
         };
 
     }
+
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
@@ -72,8 +71,8 @@ public class BattaryService extends Service implements TextToSpeech.OnInitListen
 
     @Override
     public void onDestroy() {
-        textToSpeech.speak(getResources().getString(R.string.server_finish), battaryModel.getEngineInfo().name, battaryModel.getSpeedVoice());
         unregisterReceiver(broadcastReceiver);
+        battaryModel.getTts().speak("конец", 1.0f);
                 super.onDestroy();
     }
 

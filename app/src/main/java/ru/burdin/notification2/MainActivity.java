@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Toast;
 
 import ru.burdin.notification2.servers.BattaryService;
 import ru.burdin.notification2.settengs.BattaryModel;
@@ -27,16 +28,18 @@ private PreferencesNotifications preferencesNotifications;
     buttonBattery = findViewById(R.id.buttonSettingBattary);
     preferencesNotifications = PreferencesNotifications.getPreferencesNotifications(this);
     battaryModel = BattaryModel.getBattaryModel(preferencesNotifications.getString(getResources().getString(R.string.key_battary)));
-mChechBoxBattary.setChecked(battaryModel.isCheckBox());
-if (savedInstanceState == null)
-startStopServer();
+
+    mChechBoxBattary.setChecked(battaryModel.isCheckBox());
+if (savedInstanceState == null) {
+    startStopServer();
+}
 }
 
         @Override
     protected void onPause() {
-    preferencesNotifications.save("battary", battaryModel.serialize());
-    super.onPause();
-    }
+                    preferencesNotifications.save("battary", battaryModel.serialize());
+            super.onPause();
+}
 
     public void onCheckboxClicked(View view) {
 startStopServer();
@@ -54,7 +57,8 @@ private  void  startStopServer() {
         startService(intent );
         battaryModel.setCheckBox(true);
     }else {
-        battaryModel.setCheckBox(false);stopService(
+        battaryModel.setCheckBox(false);
+        stopService(
                 new Intent(MainActivity.this, BattaryService.class
                 ));
     }
