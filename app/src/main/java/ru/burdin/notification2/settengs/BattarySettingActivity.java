@@ -25,11 +25,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import ru.burdin.notification2.R;
 import ru.burdin.notification2.TTS;
@@ -45,8 +47,6 @@ public class BattarySettingActivity extends AppCompatActivity  implements  TextT
     private ArrayAdapter<String> adapter;
 private Spinner spinner;
     private  ArrayAdapter arrayAdapterSpiner;
-    private List<TextToSpeech.EngineInfo> listInstalledEngines;
-    private  List <String> listInstalledEnginesName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,61 +58,21 @@ private Spinner spinner;
         listViewLevel = findViewById(R.id.listViewBattarySetting);
         editTextLevel = findViewById(R.id.editTextLevel);
         spinner = findViewById(R.id.spinner);
-        listInstalledEngines = battaryModel.getTts().getEngines();
-        listInstalledEnginesName = new ArrayList<>();
-    for (int i = 0; i < listInstalledEngines.size(); i++) {
-        listInstalledEnginesName.add(i, listInstalledEngines.get(i).label);
-    }
-    listInstalledEnginesName.add(0, "Выбрать движок синтезатора речи");
-    arrayAdapterSpiner = new ArrayAdapter<String>(this,
-                android.R.layout.simple_spinner_item,listInstalledEnginesName
-                );
-arrayAdapterSpiner.setDropDownViewResource(android.R.layout.simple_dropdown_item_1line );
-spinner.setAdapter(arrayAdapterSpiner);
+        TextView textView = findViewById(R.id.speed);
+//textView.setText(battaryModel.time((System.currentTimeMillis() -TimeUnit.MINUTES.toMillis(11)), System.currentTimeMillis(), 93, 92));
+//        textView.setText(battaryModel.log);
+        battaryModel.setSpeenner(spinner, arrayAdapterSpiner);
 adapter = new ArrayAdapter<>(this,
                 android.R.layout.simple_list_item_1, battaryModel.getLevels());
         listViewLevel.setAdapter(adapter);
-                float prog = battaryModel.getSpeedVoice() * 100;
-        seekBarSpeed.setProgress((int) prog);
-
+battaryModel.setSeekBar(seekBarSpeed);
 }
 
     @Override
     protected void onResume() {
         super.onResume();
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                if (i != 0) {
-                    battaryModel.setEngineInfo(listInstalledEngines.get(i - 1).name);
-                    battaryModel.load(getApplicationContext());
-                }
-            }
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        seekBarSpeed.setOnSeekBarChangeListener(
-                new SeekBar.OnSeekBarChangeListener() {
-                    @Override
-                    public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
-                        battaryModel.setSpeedVoice((float) i / 100);
-
-                    }
-
-                    @Override
-                    public void onStartTrackingTouch(SeekBar seekBar) {
-
-                    }
-
-                    @Override
-                    public void onStopTrackingTouch(SeekBar seekBar) {
-
-                    }
-                }
-        );
-
-
+battaryModel.setEngineInfo(getApplicationContext(), spinner);
+battaryModel.setSpeedVoice(seekBarSpeed);
     }
 
 
@@ -132,8 +92,7 @@ adapter = new ArrayAdapter<>(this,
             public void onReceive(Context context, Intent intent) {
                 int level = intent.getIntExtra("level", 0);
                 String text = getResources().getString(R.string.level_notification) + " " + level + " %";
-                String utteranceId = this.hashCode() + "";
-        battaryModel.getTts().speak(text, battaryModel.getSpeedVoice());
+battaryModel.speak(text);
                 unregisterReceiver(broadcastReceiver);
             }
         };
